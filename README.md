@@ -355,12 +355,81 @@ Observable.EveryUpdate()
 First 可以直接传一个过滤条件，不使用Where，如：
 
 ```csharp
-// 更好的实现，first直接传一个条件
+			// 更好的实现，first直接传一个条件
             Observable.EveryUpdate()
                 .First(_ => Input.GetMouseButtonDown(0))
                 .Subscribe(_ =>
                 {
                     Debug.Log("left mouse button clicked");
+                })
+                .AddTo(this);
+```
+
+
+
+## 6.AddTo()
+
+绑定声明周期，更安全。
+
+
+
+## 7.UGUI 的支持
+
+Button 点击事件注册，如：
+
+```csh
+			button.OnClickAsObservable()
+                .Subscribe(_ =>
+                {
+                    Debug.Log("Button on clicked");
+                })
+                .AddTo(this);
+```
+
+Toggle 单选事件注册，如：
+
+```cs
+            toggle.OnValueChangedAsObservable()
+                .Subscribe(on =>
+                {
+                    if (on)
+                    {
+                        Debug.Log("toggle is on");
+                    }
+                });
+
+            // toggle 通过Where过滤 简化
+            toggle.OnValueChangedAsObservable()
+                .Where(on => !on)
+                .Subscribe(on =>
+                {
+                    Debug.Log("toggle is off");
+                });
+```
+
+支持EventSystem的各种Trigger接口的监听，如：
+
+Image本身是一个Graphic类型，实现IDragHandler就可以实现对拖拽事件的监听，但使用UniRx更方便。
+
+```csh
+// 对带有Ragcast Target标签的Graphic类型如（Text，Image，Button等），进行拖拽监听
+Graphic imgGraphic = transform.Find("Image").GetComponent<Graphic>();
+
+imgGraphic.OnBeginDragAsObservable().Subscribe(_ => Debug.Log("开始拖拽了！"));
+imgGraphic.OnDragAsObservable().Subscribe(_ => Debug.Log("dragging"));
+imgGraphic.OnEndDragAsObservable().Subscribe(_ => Debug.Log("end drag"));
+```
+
+Unity 的Event 也可以使用 AsObservable 进行订阅。
+
+```csh
+            // Unity 的Event 也可以使用 AsObservable 进行订阅。
+            UnityEvent mEvent;
+
+            mEvent.AsObservable()
+                .Subscribe(_ =>
+                {
+                    // do something
                 })
                 .AddTo(this);
 ```
