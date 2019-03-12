@@ -65,3 +65,100 @@ UniRx 就是 Unity Reactive Extensions，擅长处理时间上异步的逻辑。
 使用Corountine非常不错，但是Coroutine是以一个方法格式定义，写起来面向过程，逻辑复杂后Coroutine嵌套Coroutine，代码强耦合不宜阅读。
 
 UniRx刚好解决这些问题，介于回调和事件之间。
+
+
+
+## 1.定时功能实现
+
+常见延时功能实现：
+
+```csharp
+using UnityEngine;
+
+namespace UniRxLession
+{
+    public class CommonTimerExample : MonoBehaviour
+    {
+        private float mStartTime;
+
+        private void Start()
+        {
+            mStartTime = Time.time;
+        }
+
+        private void Update()
+        {
+            if (Time.time - mStartTime > 5)
+            {
+                Debug.Log("do Something!");
+
+                // 避免再次执行
+                mStartTime = float.MaxValue;
+            }
+        }
+    }
+}
+```
+
+使用Coroutine更好的实现
+
+```csharp
+using System;
+using System.Collections;
+using UnityEngine;
+
+namespace UniRxLession
+{
+    public class CoroutineTimerExample : MonoBehaviour
+    {
+        private void Start()
+        {
+            StartCoroutine(Timer(5.0f, () => {
+                Debug.Log("do something!");
+            }));
+        }
+
+        private IEnumerator Timer(float seconds, Action callbback)
+        {
+            yield return new WaitForSeconds(seconds);
+            callbback();
+        }
+    }
+}
+```
+
+ 使用 UniRx 实现
+
+```csh
+using UnityEngine;
+using UniRx;
+using System;
+
+namespace UniRxLession
+{
+    public class UniRxTimerExample : MonoBehaviour
+    {
+        void Start()
+        {
+            Observable.Timer(TimeSpan.FromSeconds(5))
+                .Subscribe(_ =>
+                {
+                    Debug.Log("do something");
+                });
+        }
+    }
+}
+```
+
+以上代码没有和Monobehaviour进行生命周期绑定，通过.AddTo(this)方式绑定。
+
+```csha
+Observable.Timer(TimeSpan.FromSeconds(5))
+                .Subscribe(_ =>
+                {
+                    Debug.Log("do something");
+                })
+                .AddTo(this);
+```
+
+ 当this(Monobehaviour)Destroy的时候，这个延时逻辑也会销毁掉，避免空指针异常。
