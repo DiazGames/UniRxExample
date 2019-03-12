@@ -162,3 +162,104 @@ Observable.Timer(TimeSpan.FromSeconds(5))
 ```
 
  当this(Monobehaviour)Destroy的时候，这个延时逻辑也会销毁掉，避免空指针异常。
+
+
+
+## 2.独立的Update
+
+Update 中掺杂大量无关逻辑，如：
+
+```csh
+using UnityEngine;
+
+namespace UniRxLession
+{
+    public class UpdateExample : MonoBehaviour
+    {
+        enum ButtonState
+        {
+            None,
+            Clicked
+        }
+
+        private bool mButtonClicked = false;
+
+        private ButtonState mButtonState;
+
+        void Update()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Debug.Log("left mouse button clickec.");
+                mButtonClicked = true;
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                Debug.Log("right mouse button clickec.");
+                mButtonClicked = true;
+            }
+
+            if (mButtonClicked && mButtonState == ButtonState.None)
+            {
+                mButtonState = ButtonState.Clicked;
+            }
+        }
+    }
+}
+```
+
+UniRx 改善此问题
+
+```csha
+using UnityEngine;
+using UniRx;
+
+namespace UniRxLession
+{
+    public class UpdateExample : MonoBehaviour
+    {
+        private void Start()
+        {
+            bool mButtonClicked = false;
+
+            ButtonState mButtonState = ButtonState.None;
+
+            // 监听鼠标左键
+            Observable.EveryUpdate()
+                .Subscribe(_ =>
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        Debug.Log("left mouse button clickec.");
+                        mButtonClicked = true;
+                    }
+                });
+
+            // 监听鼠标右键
+            Observable.EveryUpdate()
+                .Subscribe(_ =>
+                {
+                    if (Input.GetMouseButtonDown(1))
+                    {
+                        Debug.Log("right mouse button clickec.");
+                        mButtonClicked = true;
+                    }
+                });
+
+            // 监听状态
+            if (mButtonClicked && mButtonState == ButtonState.None)
+            {
+                mButtonState = ButtonState.Clicked;
+            }
+        }
+
+        enum ButtonState
+        {
+            None,
+            Clicked
+        }
+    }
+}
+```
+
