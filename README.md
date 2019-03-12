@@ -411,6 +411,10 @@ Toggle 单选事件注册，如：
 
 Image本身是一个Graphic类型，实现IDragHandler就可以实现对拖拽事件的监听，但使用UniRx更方便。
 
+Ragcast Targeet 示例：
+
+![](http://po8veecle.bkt.clouddn.com/Raycast%20Target.jpg)
+
 ```csh
 // 对带有Ragcast Target标签的Graphic类型如（Text，Image，Button等），进行拖拽监听
 Graphic imgGraphic = transform.Find("Image").GetComponent<Graphic>();
