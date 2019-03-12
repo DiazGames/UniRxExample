@@ -8,6 +8,9 @@ namespace UniRxLession
 {
     public class UIExample : MonoBehaviour
     {
+
+        // Unity 的Event 也可以使用 AsObservable 进行订阅。
+        UnityEvent mEvent;
         void Start()
         {
             Button button = transform.Find("Button").GetComponent<Button>();
@@ -44,8 +47,7 @@ namespace UniRxLession
             imgGraphic.OnDragAsObservable().Subscribe(_ => Debug.Log("dragging"));
             imgGraphic.OnEndDragAsObservable().Subscribe(_ => Debug.Log("end drag"));
 
-            // Unity 的Event 也可以使用 AsObservable 进行订阅。
-            UnityEvent mEvent;
+
 
             mEvent.AsObservable()
                 .Subscribe(_ =>

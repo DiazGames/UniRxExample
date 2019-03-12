@@ -413,7 +413,7 @@ Image本身是一个Graphic类型，实现IDragHandler就可以实现对拖拽�
 
 Ragcast Targeet 示例：
 
-![](http://po8veecle.bkt.clouddn.com/Raycast%20Target.jpg)
+![Ragcast Targeet 示例](http://po8veecle.bkt.clouddn.com/Raycast%20Target.jpg)
 
 ```csh
 // 对带有Ragcast Target标签的Graphic类型如（Text，Image，Button等），进行拖拽监听
@@ -437,4 +437,43 @@ Unity 的Event 也可以使用 AsObservable 进行订阅。
                 })
                 .AddTo(this);
 ```
+
+
+
+## 8.ReactiveProperty 响应式属性
+
+监听一个值发生变化，如：
+
+```csh
+using UnityEngine;
+using UniRx;
+
+namespace UniRxLession
+{
+    public class ReactivePropertyExample : MonoBehaviour
+    {
+        public ReactiveProperty<int> Age = new ReactiveProperty<int>();
+        
+        void Start()
+        {
+            Age.Subscribe(age =>
+            {
+                // do age
+            });
+
+            Age.Value = 5;
+        }
+    }
+}
+```
+
+当Age的值被设置，就会通知所有 Subscribe 的回调函数，可以被 Subscribe 多次，同样支持First， Where等操作符。
+
+这样就实现了MVP架构模式，在 Ctrl 中，进行 Model 和 View 的绑定。
+
+Model 的所有属性都是用 ReactiveProperty，然后再 Ctrl 中进行订阅。
+
+用过 View 更改 Model 的属性值。
+
+形成 View -> Ctrl -> Model -> Ctrl -> View 时间相应环。
 
