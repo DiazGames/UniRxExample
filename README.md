@@ -325,7 +325,9 @@ if(Input.GetMouseButtonDown(0))
 * Subscribe 是事件的接收者，接收EveryUpdate发送来的事件。
 * Where 是在事件的发布者和接收者之间的一个过滤操作，过滤掉不满足条件的事件。
 
-![Where 示意图](/Users/fmyd/Downloads/资料/课件/第一章 UniRx 的魅力/4.操作符Where示例图.jpg)http://po8veecle.bkt.clouddn.com/4.%E6%93%8D%E4%BD%9C%E7%AC%A6Where%E7%A4%BA%E4%BE%8B%E5%9B%BE.jpg
+
+
+![](http://po8veecle.bkt.clouddn.com/4.%E6%93%8D%E4%BD%9C%E7%AC%A6Where%E7%A4%BA%E4%BE%8B%E5%9B%BE.jpg)
 
 事件的本身可以是参数，但是 EveryUpdate 没有参数，所以在Where中不需要接收参数，使用 _ 来表示不用参数。
 
