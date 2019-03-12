@@ -297,7 +297,7 @@ addTo：绑定生命周期。
 
 
 
-## 4.操作符Where
+## 4.操作符 Where
 
 UniRx 的侧重点，不是发布者和订阅者如何使用，而是事件从发布者到订阅者之间的过程如何处理。
 
@@ -330,4 +330,38 @@ if(Input.GetMouseButtonDown(0))
 ![](http://po8veecle.bkt.clouddn.com/4.%E6%93%8D%E4%BD%9C%E7%AC%A6Where%E7%A4%BA%E4%BE%8B%E5%9B%BE.jpg)
 
 事件的本身可以是参数，但是 EveryUpdate 没有参数，所以在Where中不需要接收参数，使用 _ 来表示不用参数。
+
+
+
+## 5.操作符 First
+
+只处理第一次鼠标点击实现：
+
+```csh
+Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(0))
+                .First()
+                .Subscribe(_ =>
+                {
+                    Debug.Log("left mouse button clicked");
+                })
+                .AddTo(this);
+```
+
+事件通过Where过滤后，又通过First过滤了一次，获取第一个通过的事件。
+
+### 更好的实现
+
+First 可以直接传一个过滤条件，不使用Where，如：
+
+```csharp
+// 更好的实现，first直接传一个条件
+            Observable.EveryUpdate()
+                .First(_ => Input.GetMouseButtonDown(0))
+                .Subscribe(_ =>
+                {
+                    Debug.Log("left mouse button clicked");
+                })
+                .AddTo(this);
+```
 
