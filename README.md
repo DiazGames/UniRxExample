@@ -263,3 +263,34 @@ namespace UniRxLession
 }
 ```
 
+
+
+## 3.UniRx 的基本语法格式
+
+Observable.XXX().Subscribe() 是非常典型的 UniRx格式。
+
+```csh
+Observable.Timer(TimeSpan.FromSeconds(5))
+                .Subscribe(_ =>
+                {
+                    Debug.Log("do something");
+                })
+                .AddTo(this);
+```
+
+Observable：可观察的，形容后面的（Timer）是可观察的，可以把Observable后面的理解成发布者。
+
+Timer：定时器，被Observable描述，所以是发布者，是事件的发送方。
+
+Subscribe：订阅，订阅前面的Timer，可以理解成订阅者，事件的接收方。
+
+addTo：绑定生命周期。
+
+连接起来是：可被观察（监听）的.Timer().订阅()
+
+顺序是：订阅可被观察（监听）的定时器。
+
+概念关系：
+
+* Timer 是可观察的
+* 可观察的才能被订阅
