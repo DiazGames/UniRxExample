@@ -10,7 +10,7 @@ namespace UniRxLession
     {
 
         // Unity 的Event 也可以使用 AsObservable 进行订阅。
-        UnityEvent mEvent;
+        private UnityEvent mEvent;
         void Start()
         {
             Button button = transform.Find("Button").GetComponent<Button>();

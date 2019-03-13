@@ -477,3 +477,95 @@ Model 的所有属性都是用 ReactiveProperty，然后再 Ctrl 中进行订阅
 
 形成 View -> Ctrl -> Model -> Ctrl -> View 时间相应环。
 
+
+
+## 9.MVP 实现
+
+### UGUI 增强
+
+实现简单的 MVP 模式，如：
+
+```csh
+using UnityEngine;
+using UnityEngine.UI;
+using UniRx;
+
+namespace UniRxLession
+{
+    // View
+    // Controller P(Presenter)
+    public class EnemyExample : MonoBehaviour
+    {
+        EnemyModel mEnemy = new EnemyModel(200);
+
+        void Start()
+        {
+            Button btnAttack = transform.Find("Button").GetComponent<Button>();
+            Text txtHP = transform.Find("Text").GetComponent<Text>();
+
+            // 点击事件监听
+            btnAttack.OnClickAsObservable()
+                .Subscribe(_ =>
+                {
+                    mEnemy.HP.Value -= 99;
+                    if (mEnemy.HP.Value <= 0)
+                    {
+                        mEnemy.HP.Value = 0;
+                    }
+                });
+
+            // 数据变化后更新到UI
+            mEnemy.HP.SubscribeToText(txtHP);
+            mEnemy.IsDead
+                .Where(isDead => isDead)
+                .Subscribe(_ =>
+                {
+                    btnAttack.interactable = false;
+                });
+        }
+    }
+
+    // Model
+    public class EnemyModel
+    {
+        public ReactiveProperty<long> HP;
+        public IReadOnlyReactiveProperty<bool> IsDead;
+
+        public EnemyModel(long initHP)
+        {
+            HP = new ReactiveProperty<long>(initHP);
+            IsDead = HP.Select(hp => hp <= 0).ToReactiveProperty();
+        }
+    }
+}
+```
+
+EnemyModel 是一个数据类，理解成 Model 层。
+
+EnemyExample 是 P （Presenter）层，将 UI 与 Model 绑定在一起，Model 层数据有改变则通知 UI 更新。
+
+当从 UI 接收到点击事件对 Model 进行数据更改，这就是简单的 MVP 模式。
+
+UniRx 支持了序列化的 ReactiveProperty 类型，在编辑器上直接看到参数，如：
+
+* IntReactiveProperty
+* LongReactiveProperty
+* FloatReactiveProperty
+* DoubleReactiveProperty
+* StringReactiveProperty
+* BoolReactiveProperty
+* 更多参见InspectableReactiveProperty.cs
+
+```csha
+public LongReactiveProperty showProToUIDemo;
+```
+
+![](http://po8veecle.bkt.clouddn.com/LongReactiveProperty.jpg)
+
+
+
+### MVP 设计模式 Model - View - (Reactive) Presenter Pattern
+
+UniRx 很容易实现MVP（MVRP）模式，结构模式如：
+
+![UniRx 实现 MVP 模式](http://po8veecle.bkt.clouddn.com/UniRx_MVP.jpg)
