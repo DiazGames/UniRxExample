@@ -26,6 +26,7 @@ namespace UniRxLession
             btnBack.OnClickAsObservable().Subscribe(_ =>
             {
                 gameObject.SetActive(false);
+                LoginRegisterExample.PanelMgr.Loginpanel.gameObject.SetActive(true);
             });
 
             btnRegister.OnClickAsObservable().Subscribe(_ =>

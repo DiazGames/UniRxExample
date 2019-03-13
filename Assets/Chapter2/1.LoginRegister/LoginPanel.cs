@@ -26,7 +26,8 @@ namespace UniRxLession
 
             btnRegister.OnClickAsObservable().Subscribe(_ =>
             {
-                Debug.Log("btnRegister button clicked");
+                gameObject.SetActive(false);
+                LoginRegisterExample.PanelMgr.RegisterPanel.gameObject.SetActive(true);
             });
 
             inpUsername.OnEndEditAsObservable()

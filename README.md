@@ -656,9 +656,9 @@ UniRx 单独对 Unity 做了很多功能上的增强。
 * ReactiveCommand 命令系统。
 * ...
 
-## UI 增强
+## 1. UI 增强
 
-所有的 UGUI 控件⽀支持列列出如下 :
+所有的 UGUI 控件支持列出如下 :
 
 ```csh
 [SerializeField] Button mButton;
@@ -686,15 +686,107 @@ Debug.Log("Result :" + result));
 }
 ```
 
-以上就是所有的 Observable ⽀支持。
-当然除了了 Observable 增强，还⽀支持了了 Subscribe 的增强。
-⽐比如 SubscribeToText
+以上就是所有的 Observable ⽀持。
+当然除了 Observable 增强，还支持了 Subscribe 的增强。
+比如 SubscribeToText
 
 ```csh
 Text resultText = GetComponent<Text>();
 mInputField.OnValueChangedAsObservable().SubscribeToText(resultText);
 ```
 
-这段代码实现的功能是，当 mInputField 的输⼊入值改变，则会⻢马上显示在 resultText 上。
-也就是完成了了，mInputField 与 resultText 的绑定。
-除此之外还⽀支持，SubscribeToInteractable。
+这段代码实现的功能是，当 mInputField 的输⼊入值改变，则会⻢上显示在 resultText 上。
+也就是完成了，mInputField 与 resultText 的绑定。
+除此之外还支持，SubscribeToInteractable。
+
+
+
+## 2. Unity 声明周期 与 Trigger
+
+UniRx 支持非常多的细分 Update 事件捕获，如：
+
+```csha
+// 支持⾮常多细分类型的 Update 事件捕获。
+Observable.EveryFixedUpdate().Subscribe(_ => { Debug.Log("EveryFixedUpdate"); });
+Observable.EveryEndOfFrame().Subscribe(_ => { Debug.Log("EveryEndOfFrame"); });
+Observable.EveryLateUpdate().Subscribe(_ => { Debug.Log("EveryLateUpdate"); });
+Observable.EveryAfterUpdate().Subscribe(_ => { Debug.Log("EveryAfterUpdate"); });
+```
+
+支持其他事件，如
+
+```csha
+Observable.EveryApplicationPause().Subscribe(paused => { });
+Observable.EveryApplicationFocus().Subscribe(focused => { });
+Observable.OnceApplicationQuit().Subscribe(_ => { });
+```
+
+不用再去创建一个单例类去实现⼀个诸如“应用程序退出事件监听”这种逻辑
+
+### Trigger 简介
+
+Observable.EveryUpdate() 这个 API 有的时候在某个脚本中实现，需要绑定 MonoBehaviour 的生命周 
+
+期(主要是 OnDestroy)，当然也有的时候是全局的，而且永远不会被销毁的。 
+
+需要绑定 MonoBehaviour 生命周期的 EveryUpdate。只需要一个 **AddTo(this)**  就可以进⾏行行绑定了。
+
+更简洁的实现：
+
+```csh
+this.UpdateAsObservable().Subscribe(_ => { });
+```
+
+这种类型的 Observable 就是 Trigger 触发器。
+
+### Trigger 类型的关键字
+
+当某个事件发生时，会将该事件发送到 Subscribe 函数中，触发器本身是一个挂在 Gameobject 上的功能脚本，来监听 GameObject 的某个事件发生，事件发生则会回调给注册它的 Subscribe 中。
+
+Trigger 同样支持Where，First，Merge 等操作符。
+
+* Trigger 大部分都是XXXAsObservable 命名形式
+* 使用 Trigger 的 GameObject 上都会挂对应的 ObservableXXXTrigger.cs脚本。
+
+AddTo() 这个API 其实是封装了一种 Trigger：ObservableDestroyTrigger。
+
+各种细分类型的 Update：
+
+```csh
+this.FixedUpdateAsObservable().Subscribe(_ => {});
+this.LateUpdateAsObservable().Subscribe(_ => {});
+this.UpdateAsObservable().Subscribe(_ => {});
+```
+
+各种碰撞的 Trigger：
+
+```csh
+this.OnCollisionEnterAsObservable(collision => {});
+this.OnCollisionExitAsObservable(collision => {});
+this.OnCollisionStayAsObservable(collision => {});
+// 同样 2D 的也支持
+this.OnCollision2DEnterAsObservable(collision => {});
+this.OnCollision2DExitAsObservable(collision => {});
+this.OnCollision2DStayAsObservable(collision => {});
+```
+
+一些脚本的参数监听：
+
+```csha
+this.OnEnableAsObservable().Subscribe(_ => {});
+this.OnDisableAsObservable().Subscribe(_ => {});
+```
+
+除了 Monobehaviour，Trigger 也支持其他组件类型：
+
+* RectTransform
+* Transform
+* UIBehaviour
+* 更多查看 ObservableTriggerExtensions.cs 和 ObservableTriggerExtensions.Component.cs 
+
+
+
+
+
+
+
