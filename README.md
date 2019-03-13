@@ -569,3 +569,76 @@ public LongReactiveProperty showProToUIDemo;
 UniRx 很容易实现MVP（MVRP）模式，结构模式如：
 
 ![UniRx 实现 MVP 模式](http://po8veecle.bkt.clouddn.com/UniRx_MVP.jpg)
+
+
+
+## 10.操作符 Merge
+
+UniRx 可以开启两个或多个事件流，使用 Merge 进行事件流的合并。
+
+```csh
+using UnityEngine;
+using UniRx;
+
+namespace UniRxLession
+{
+    public class MergeExample : MonoBehaviour
+    {
+        private void Start()
+        {
+            var leftClickEvent = Observable.EveryUpdate()
+            .Where(_ => Input.GetMouseButtonDown(0));
+
+            var rightClickEvent = Observable.EveryUpdate()
+            .Where(_ => Input.GetMouseButtonDown(1));
+
+            Observable.Merge(leftClickEvent, rightClickEvent)
+                .Subscribe(_ =>
+                {
+                    Debug.Log("当鼠标左键或右键点击时都会进行处理");
+                });
+        }
+    }
+}
+```
+
+实现某个按钮点击时，使所有当前页面的按钮不可点击，并知道哪个按钮被点击了，如：
+
+```csh
+using UnityEngine;
+using UnityEngine.UI;
+using UniRx;
+using System;
+
+namespace UniRxLession
+{
+    public class PanelEventLockExample : MonoBehaviour
+    {
+        void Start()
+        {
+            Button btnA = transform.Find("ButtonA").GetComponent<Button>();
+            Button btnB = transform.Find("ButtonB").GetComponent<Button>();
+            Button btnC = transform.Find("ButtonC").GetComponent<Button>();
+
+            var eventA = btnA.OnClickAsObservable().Select(_ => "A");
+            var eventB = btnB.OnClickAsObservable().Select(_ => "B");
+            var eventC = btnC.OnClickAsObservable().Select(_ => "C");
+
+            Observable.Merge(eventA, eventB, eventC)
+                .First()
+                .Subscribe(btnId =>
+                {
+                    Debug.LogFormat("button {0} clicked", btnId);
+
+                    //1 秒后隐藏当前页面
+                    Observable.Timer(TimeSpan.FromSeconds(1.0f))
+                    .Subscribe(__ =>
+                    {
+                        gameObject.SetActive(false);
+                    });
+                });
+        }
+    }
+}
+```
+
