@@ -1,7 +1,7 @@
 # UniRxExample
 
 
-# 0.UniRx介绍
+# UniRx魅力
 
 UniRx是一个Unity3D编程框架，专注于解决异步逻辑，使异步逻辑实现更简洁优雅
 
@@ -642,3 +642,59 @@ namespace UniRxLession
 }
 ```
 
+
+
+# Unity 与 UniRx
+
+UniRx 单独对 Unity 做了很多功能上的增强。
+
+* UI 增强
+* GameObject/MonoBehaviour 增强以及引擎的事件增强（OnApplicationPause、UnityEvent）
+* Coroutine/Thread 增强
+* 网络请求（WWW 等）
+* ReactiveProperty、ReactiveCollection、ReactiveDictionary 等。
+* ReactiveCommand 命令系统。
+* ...
+
+## UI 增强
+
+所有的 UGUI 控件⽀支持列列出如下 :
+
+```csh
+[SerializeField] Button mButton;
+[SerializeField] Toggle mToggle;
+[SerializeField] Scrollbar mScrollbar;
+[SerializeField] ScrollRect mScrollRect;
+[SerializeField] Slider mSlider;
+[SerializeField] InputField mInputField;
+void Start()
+{
+    mButton.OnClickAsObservable().Subscribe(_ => Debug.Log("On Button
+Clicked"));
+    mToggle.OnValueChangedAsObservable().Subscribe(on => Debug.Log("Toggle " +
+on));
+	mScrollbar.OnValueChangedAsObservable().Subscribe(scrollValue =>
+Debug.Log("Scrolled " + scrollValue));
+    mScrollRect.OnValueChangedAsObservable().Subscribe(scrollValue =>
+Debug.Log("Scrolled " + scrollValue);
+    mSlider.OnValueChangedAsObservable().Subscribe(sliderValue =>
+Debug.Log("Slider Value " + sliderValue));
+    mInputField.OnValueChangedAsObservable().Subscribe(inputText =>
+Debug.Log("Input Text: " + inputText));
+    mInputField.OnEndEditAsObservable().Subscribe(result =>
+Debug.Log("Result :" + result));
+}
+```
+
+以上就是所有的 Observable ⽀支持。
+当然除了了 Observable 增强，还⽀支持了了 Subscribe 的增强。
+⽐比如 SubscribeToText
+
+```csh
+Text resultText = GetComponent<Text>();
+mInputField.OnValueChangedAsObservable().SubscribeToText(resultText);
+```
+
+这段代码实现的功能是，当 mInputField 的输⼊入值改变，则会⻢马上显示在 resultText 上。
+也就是完成了了，mInputField 与 resultText 的绑定。
+除此之外还⽀支持，SubscribeToInteractable。
