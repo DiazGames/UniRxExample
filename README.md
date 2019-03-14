@@ -914,6 +914,39 @@ public class ButtonWhenAllExample : MonoBehaviour
     }
 ```
 
+## 6. 事件流结束 OnCompleted
+
+使用 Subscribe API 订阅的时候，第一个参数是 OnNext 回调的注册，第二个参数是 OnCompleted 事件完成，第三个参数是 OnError，代码如下：
+
+```csha
+public class OnCompletedExample : MonoBehaviour
+    {
+        void Start()
+        {
+            Observable.Timer(TimeSpan.FromSeconds(1.0f))
+            .Subscribe(_ =>
+            {
+                Debug.Log("OnNext: 1 second");
+            }, () => {
+                Debug.Log("OnCompleted!");
+            });
+
+            Observable.FromCoroutine(A)
+                .Subscribe(_ =>
+                {
+                    Debug.Log("OnNext: 2 second");
+                }, () => {
+                    Debug.Log("OnCompleted!");
+                });
+        }
+
+        private IEnumerator A()
+        {
+            yield return new WaitForSeconds(2.0f);
+        }
+    }
+```
+
 
 
 
