@@ -129,7 +129,7 @@ namespace UniRxLession
 
  使用 UniRx 实现
 
-```csh
+```csharp
 using UnityEngine;
 using UniRx;
 using System;
@@ -152,7 +152,7 @@ namespace UniRxLession
 
 以上代码没有和Monobehaviour进行生命周期绑定，通过.AddTo(this)方式绑定。
 
-```csha
+```csharp
 Observable.Timer(TimeSpan.FromSeconds(5))
                 .Subscribe(_ =>
                 {
@@ -169,7 +169,7 @@ Observable.Timer(TimeSpan.FromSeconds(5))
 
 Update 中掺杂大量无关逻辑，如：
 
-```csh
+```csharp
 using UnityEngine;
 
 namespace UniRxLession
@@ -211,7 +211,7 @@ namespace UniRxLession
 
 UniRx 改善此问题
 
-```csha
+```csharp
 using UnityEngine;
 using UniRx;
 
@@ -269,7 +269,7 @@ namespace UniRxLession
 
 Observable.XXX().Subscribe() 是非常典型的 UniRx格式。
 
-```csh
+```csharp
 Observable.Timer(TimeSpan.FromSeconds(5))
                 .Subscribe(_ =>
                 {
@@ -303,7 +303,7 @@ UniRx 的侧重点，不是发布者和订阅者如何使用，而是事件从�
 
 之间介绍Update API 的代码可使用Where优化如下：
 
-```csha
+```csharp
 Observable.EveryUpdate()
                 .Where(_ => Input.GetMouseButtonDown(0))
                 .Subscribe(_ =>
@@ -315,7 +315,7 @@ Observable.EveryUpdate()
 
 Where 可以理解成一个条件语句，类似if，过滤掉不满足条件的事件。
 
-```csha
+```csharp
 if(Input.GetMouseButtonDown(0))
 ```
 
@@ -337,7 +337,7 @@ if(Input.GetMouseButtonDown(0))
 
 只处理第一次鼠标点击实现：
 
-```csh
+```csharp
 Observable.EveryUpdate()
                 .Where(_ => Input.GetMouseButtonDown(0))
                 .First()
@@ -377,7 +377,7 @@ First 可以直接传一个过滤条件，不使用Where，如：
 
 Button 点击事件注册，如：
 
-```csh
+```csharp
 			button.OnClickAsObservable()
                 .Subscribe(_ =>
                 {
@@ -388,7 +388,7 @@ Button 点击事件注册，如：
 
 Toggle 单选事件注册，如：
 
-```cs
+```csharp
             toggle.OnValueChangedAsObservable()
                 .Subscribe(on =>
                 {
@@ -415,7 +415,7 @@ Ragcast Targeet 示例：
 
 ![Ragcast Targeet 示例](http://po8veecle.bkt.clouddn.com/Raycast%20Target.jpg)
 
-```csh
+```csharp
 // 对带有Ragcast Target标签的Graphic类型如（Text，Image，Button等），进行拖拽监听
 Graphic imgGraphic = transform.Find("Image").GetComponent<Graphic>();
 
@@ -426,7 +426,7 @@ imgGraphic.OnEndDragAsObservable().Subscribe(_ => Debug.Log("end drag"));
 
 Unity 的Event 也可以使用 AsObservable 进行订阅。
 
-```csh
+```csharp
             // Unity 的Event 也可以使用 AsObservable 进行订阅。
             UnityEvent mEvent;
 
@@ -444,7 +444,7 @@ Unity 的Event 也可以使用 AsObservable 进行订阅。
 
 监听一个值发生变化，如：
 
-```csh
+```csharp
 using UnityEngine;
 using UniRx;
 
@@ -485,7 +485,7 @@ Model 的所有属性都是用 ReactiveProperty，然后再 Ctrl 中进行订阅
 
 实现简单的 MVP 模式，如：
 
-```csh
+```csharp
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
@@ -556,7 +556,7 @@ UniRx 支持了序列化的 ReactiveProperty 类型，在编辑器上直接看�
 * BoolReactiveProperty
 * 更多参见InspectableReactiveProperty.cs
 
-```csha
+```csharp
 public LongReactiveProperty showProToUIDemo;
 ```
 
@@ -576,7 +576,7 @@ UniRx 很容易实现MVP（MVRP）模式，结构模式如：
 
 UniRx 可以开启两个或多个事件流，使用 Merge 进行事件流的合并。
 
-```csh
+```csharp
 using UnityEngine;
 using UniRx;
 
@@ -604,7 +604,7 @@ namespace UniRxLession
 
 实现某个按钮点击时，使所有当前页面的按钮不可点击，并知道哪个按钮被点击了，如：
 
-```csh
+```csharp
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
@@ -660,7 +660,7 @@ UniRx 单独对 Unity 做了很多功能上的增强。
 
 所有的 UGUI 控件支持列出如下 :
 
-```csh
+```csharp
 [SerializeField] Button mButton;
 [SerializeField] Toggle mToggle;
 [SerializeField] Scrollbar mScrollbar;
@@ -690,7 +690,7 @@ Debug.Log("Result :" + result));
 当然除了 Observable 增强，还支持了 Subscribe 的增强。
 比如 SubscribeToText
 
-```csh
+```csharp
 Text resultText = GetComponent<Text>();
 mInputField.OnValueChangedAsObservable().SubscribeToText(resultText);
 ```
@@ -705,7 +705,7 @@ mInputField.OnValueChangedAsObservable().SubscribeToText(resultText);
 
 UniRx 支持非常多的细分 Update 事件捕获，如：
 
-```csha
+```csharp
 // 支持⾮常多细分类型的 Update 事件捕获。
 Observable.EveryFixedUpdate().Subscribe(_ => { Debug.Log("EveryFixedUpdate"); });
 Observable.EveryEndOfFrame().Subscribe(_ => { Debug.Log("EveryEndOfFrame"); });
@@ -715,7 +715,7 @@ Observable.EveryAfterUpdate().Subscribe(_ => { Debug.Log("EveryAfterUpdate"); })
 
 支持其他事件，如
 
-```csha
+```csharp
 Observable.EveryApplicationPause().Subscribe(paused => { });
 Observable.EveryApplicationFocus().Subscribe(focused => { });
 Observable.OnceApplicationQuit().Subscribe(_ => { });
@@ -733,7 +733,7 @@ Observable.EveryUpdate() 这个 API 有的时候在某个脚本中实现，需�
 
 更简洁的实现：
 
-```csh
+```csharp
 this.UpdateAsObservable().Subscribe(_ => { });
 ```
 
@@ -752,7 +752,7 @@ AddTo() 这个API 其实是封装了一种 Trigger：ObservableDestroyTrigger。
 
 各种细分类型的 Update：
 
-```csh
+```csharp
 this.FixedUpdateAsObservable().Subscribe(_ => {});
 this.LateUpdateAsObservable().Subscribe(_ => {});
 this.UpdateAsObservable().Subscribe(_ => {});
@@ -760,7 +760,7 @@ this.UpdateAsObservable().Subscribe(_ => {});
 
 各种碰撞的 Trigger：
 
-```csh
+```csharp
 this.OnCollisionEnterAsObservable(collision => {});
 this.OnCollisionExitAsObservable(collision => {});
 this.OnCollisionStayAsObservable(collision => {});
@@ -772,7 +772,7 @@ this.OnCollision2DStayAsObservable(collision => {});
 
 一些脚本的参数监听：
 
-```csha
+```csharp
 this.OnEnableAsObservable().Subscribe(_ => {});
 this.OnDisableAsObservable().Subscribe(_ => {});
 ```
@@ -794,7 +794,7 @@ UIBehavior 是 UGUI 所有控件的基类。
 
 项目中用的比较多的几个 Trigger：
 
-```csh
+```csharp
 imgGraphic.OnBeginDragAsObservable().Subscribe(_ => Debug.Log("开始拖拽了！"));
 imgGraphic.OnDragAsObservable().Subscribe(_ => Debug.Log("dragging"));
 imgGraphic.OnEndDragAsObservable().Subscribe(_ => Debug.Log("end drag"));
@@ -803,7 +803,7 @@ imgGraphic.OnPointerClickAsObservable().Subscribe(clickEvent => { });
 
 使用各种 Trigger 类型，需要导入命名空间：
 
-```csh
+```csharp
 using UniRx.Triggers;
 ```
 
@@ -811,7 +811,7 @@ using UniRx.Triggers;
 
 UniRx 可以将一个 Coroutine 转化成一个事件源（Observable）如：
 
-```csha
+```csharp
 public class CoroutineExample : MonoBehaviour
     {
         IEnumerator CoroutineA()
@@ -858,7 +858,7 @@ UniRx 支持顺序执行 Coroutine，并行执行 Coroutine 等，可以让 Coro
 
 使用 WhenAll 可以实现 Coroutine 的并行操作，如：
 
-```CSHA
+```csharp
 public class CoroutineWhenAllExample : MonoBehaviour
     {
         IEnumerator A()
@@ -892,7 +892,7 @@ WhenAll 和 Merge 是同类型的，处理多个流的操作符。
 
 实现多个按钮都点击过一次的逻辑，如：
 
-```csh
+```csharp
 public class ButtonWhenAllExample : MonoBehaviour
     {
         [SerializeField] public Button mButtonA;
@@ -918,7 +918,7 @@ public class ButtonWhenAllExample : MonoBehaviour
 
 使用 Subscribe API 订阅的时候，第一个参数是 OnNext 回调的注册，第二个参数是 OnCompleted 事件完成，第三个参数是 OnError，代码如下：
 
-```csha
+```csharp
 public class OnCompletedExample : MonoBehaviour
     {
         void Start()
@@ -943,6 +943,41 @@ public class OnCompletedExample : MonoBehaviour
         private IEnumerator A()
         {
             yield return new WaitForSeconds(2.0f);
+        }
+    }
+```
+
+## 7.Start:让多线程更简单
+
+UniRx 改善了Unity 使用 Thread.Start 开启线程，当逻辑复杂的时候多线程难以管理的状况。
+
+实现”当所有线程运行完成后，在主线程执行某个任务“，如：
+
+```csharp
+public class ThreadExample : MonoBehaviour
+    {
+        void Start()
+        {
+            var threadAStream = 
+            Observable.Start(() =>                             // 开启一个线程流
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(1.0f));
+                return 10;
+            });
+
+            var threadBStream = 
+            Observable.Start(() =>                             // 开启一个线程流
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(2.0f));
+                return 10;
+            });
+
+            Observable.WhenAll(threadAStream, threadBStream)
+                .ObserveOnMainThread()                         // WhenAll的结果转回到主线程
+                .Subscribe(rs =>
+                {
+                    Debug.Log(rs[0] + ":" + rs[1]);
+                });
         }
     }
 ```
