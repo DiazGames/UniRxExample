@@ -46,7 +46,7 @@ namespace UniRxLession
             imgGraphic.OnBeginDragAsObservable().Subscribe(_ => Debug.Log("开始拖拽了！"));
             imgGraphic.OnDragAsObservable().Subscribe(_ => Debug.Log("dragging"));
             imgGraphic.OnEndDragAsObservable().Subscribe(_ => Debug.Log("end drag"));
-
+            imgGraphic.OnPointerClickAsObservable().Subscribe(clickEvent => { });
 
 
             mEvent.AsObservable()

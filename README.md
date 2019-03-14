@@ -784,6 +784,138 @@ this.OnDisableAsObservable().Subscribe(_ => {});
 * UIBehaviour
 * 更多查看 ObservableTriggerExtensions.cs 和 ObservableTriggerExtensions.Component.cs 
 
+## 3. UI Trigger
+
+Trigger 对 UIBehavior 的支持。
+
+UIBehavior 是 UGUI 所有控件的基类。
+
+比如所有的 Graphic 类型（带有 Raycast Target 选定框）都支持 OnPointDownAsObservable，OnPointEnterAsObservable ，OnPointExitAsObservable 等 Trigger。
+
+项目中用的比较多的几个 Trigger：
+
+```csh
+imgGraphic.OnBeginDragAsObservable().Subscribe(_ => Debug.Log("开始拖拽了！"));
+imgGraphic.OnDragAsObservable().Subscribe(_ => Debug.Log("dragging"));
+imgGraphic.OnEndDragAsObservable().Subscribe(_ => Debug.Log("end drag"));
+imgGraphic.OnPointerClickAsObservable().Subscribe(clickEvent => { });
+```
+
+使用各种 Trigger 类型，需要导入命名空间：
+
+```csh
+using UniRx.Triggers;
+```
+
+## 4. Coroutine 的操作
+
+UniRx 可以将一个 Coroutine 转化成一个事件源（Observable）如：
+
+```csha
+public class CoroutineExample : MonoBehaviour
+    {
+        IEnumerator CoroutineA()
+        {
+            yield return new WaitForSeconds(1.0f);
+            Debug.Log("--------- A");
+        }
+
+        private void Start()
+        {
+            Observable.FromCoroutine(_ => CoroutineA())
+                .Subscribe(_ =>
+                {
+                    Debug.Log("1 second later print complete!");
+                }).AddTo(this);
+        }
+    }
+```
+
+将 Observable 转为一个 Coroutine 中的 yield 对象，如：
+
+```csharp
+public class Rx2YieldExample : MonoBehaviour
+    {
+        IEnumerator Delay1Second()
+        {
+            yield return Observable.Timer(TimeSpan.FromSeconds(1.0f)).ToYieldInstruction();
+            Debug.Log("--------B");
+        }
+
+        // Use this for initialization
+        void Start()
+        {
+            StartCoroutine(Delay1Second());
+        }
+    }
+```
+
+UniRx 支持顺序执行 Coroutine，并行执行 Coroutine 等，可以让 Coroutine 更加强大。
+
+## 5. WhenAll : Coroutine 并行操作
+
+当所有的事件流都结束，触发 Subscribe 注册的回调。
+
+使用 WhenAll 可以实现 Coroutine 的并行操作，如：
+
+```CSHA
+public class CoroutineWhenAllExample : MonoBehaviour
+    {
+        IEnumerator A()
+        {
+            yield return new WaitForSeconds(1.0f);
+            Debug.Log("-----A");
+        }
+
+        IEnumerator B()
+        {
+            yield return new WaitForSeconds(2.0f);
+            Debug.Log("-----B");
+        }
+
+        private void Start()
+        {
+            var streamA = Observable.FromCoroutine(_ => A());
+            var streamB = Observable.FromCoroutine(_ => B());
+
+            Observable.WhenAll(streamA, streamB)
+                .Subscribe(_ =>
+                {
+                    Debug.Log("print completed");
+
+                }).AddTo(this);
+        }
+    }
+```
+
+WhenAll 和 Merge 是同类型的，处理多个流的操作符。
+
+实现多个按钮都点击过一次的逻辑，如：
+
+```csh
+public class ButtonWhenAllExample : MonoBehaviour
+    {
+        [SerializeField] public Button mButtonA;
+        [SerializeField] public Button mButtonB;
+        [SerializeField] public Button mButtonC;
+
+        void Start()
+        {
+            var streamA = mButtonA.OnClickAsObservable().First();
+            var streamB = mButtonB.OnClickAsObservable().First();
+            var streamC = mButtonC.OnClickAsObservable().First();
+
+            Observable.WhenAll(streamA, streamB, streamC)
+                .Subscribe(_ =>
+                {
+                    Debug.Log("All buttons were clicked");
+                }).AddTo(this);
+        }
+    }
+```
+
+
+
 
 
 
