@@ -1151,7 +1151,104 @@ public class OperatorExample : MonoBehaviour
     }
 ```
 
+## 10.ReactiveCollection 与 ReactiveDictionary
 
+### ReactiveCollection
+
+ReactionCollection 类似 List，可以使用如下的操作符：
+
+* ObserveAdd				// 当新的 Item 添加时触发
+* ObserveRemove                         // 删除
+* ObserveReplace                          //替换
+* ObserveMove                              // 移动
+* ObserveCountChanged             // 数量改变（Add, Remove）
+
+```csharp
+public class ReactiveCollectionExample : MonoBehaviour
+    {
+        ReactiveCollection<int> collection = new ReactiveCollection<int>
+        {
+            1,2,3,4,5
+        };
+        void Start()
+        {
+            foreach (var item in collection)
+            {
+                Debug.Log(item);
+            }
+
+            // 集合添加数据时订阅
+            collection.ObserveAdd()
+                .Subscribe(addValue =>
+                {
+                    Debug.Log("added " + addValue);
+                });
+
+            // 集合移除数据时订阅
+            collection.ObserveRemove()
+                .Subscribe(removeValue =>
+                {
+                    Debug.Log("remove " + removeValue);
+                });
+
+            // 集合每次数据变动监听每
+            collection.ObserveCountChanged()
+                .Subscribe(count =>
+                {
+                    Debug.Log("collection count " + count);
+                });
+
+            collection.Add(6);
+            collection.Remove(2);
+
+        }
+    }
+```
+
+### ReactiveDictionary
+
+ReactiveDictionary 和 ReactiveCollection 类似，代码如下：
+
+```csharp
+public class ReactiveCollectionExample : MonoBehaviour
+    {
+        ReactiveCollection<int> collection = new ReactiveCollection<int>
+        {
+            1,2,3,4,5
+        };
+        void Start()
+        {
+            foreach (var item in collection)
+            {
+                Debug.Log(item);
+            }
+
+            // 集合添加数据时订阅
+            collection.ObserveAdd()
+                .Subscribe(addValue =>
+                {
+                    Debug.Log("added " + addValue);
+                });
+
+            // 集合移除数据时订阅
+            collection.ObserveRemove()
+                .Subscribe(removeValue =>
+                {
+                    Debug.Log("remove " + removeValue);
+                });
+
+            // 集合每次数据变动监听每
+            collection.ObserveCountChanged()
+                .Subscribe(count =>
+                {
+                    Debug.Log("collection count " + count);
+                });
+
+            collection.Add(6);
+            collection.Remove(2);
+        }
+    }
+```
 
 
 
