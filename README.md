@@ -1039,6 +1039,118 @@ ObservableWWW 的 API 都可以穿进去一个 ScheduledNotifier<T>()，用来�
 
 Subscribe 传回来的值是当前的进度。
 
+## 9.ReactiveCommand
+
+ReactiveCommand 定义
+
+```csharp
+public interface IReactiveCommand<T> : IObservable<T>
+{
+	IReadOnlyReactiveProperty<bool> CanExecute { get; }
+	bool Execute(T parameter);
+}
+```
+
+提供了两个 API：
+
+* CanExecute
+* Execute
+
+Execute 方法被外部调用，Command 执行。
+
+CanExecute 内部使用，对外部提供只读访问。
+
+当 CanExecute 为 false 时，外部调用 Execute 则该 Command 不会被执行。
+
+当 CanExecute 为 true 时，外部调用 Execute 则该 Command 会被执行。
+
+创建新的 ReactiveCommand 默认 CanExecute 为 true。
+
+ ```csharp
+public class ReactiveCommandExample : MonoBehaviour
+    {
+        void Start()
+        {
+            ReactiveCommand command = new ReactiveCommand();
+
+            command.Subscribe(_ =>
+            {
+                Debug.Log("Command executed!");
+            });
+
+            command.Execute();
+            command.Execute();
+        }
+    }
+ ```
+
+实现鼠标按下持续输出，当抬起鼠标时，则停止输出。
+
+```csharp
+public class MouseUpExample : MonoBehaviour
+    {
+        void Start()
+        {
+            // 创建鼠标按下事件流，返回true
+            var mouseClickDownStream = Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(0))
+                .Select(_ => true);
+
+            // 创建鼠标抬起事件流，返回false
+            var mouseClickUpStream = Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonUp(0))
+                .Select(_ => false);
+
+            // 合并事件流
+            var mergeStream = Observable.Merge(mouseClickDownStream, mouseClickUpStream);
+
+            // 创建命令
+            var reactiveCommand = new ReactiveCommand(mergeStream, false);
+
+            // 订阅命令
+            reactiveCommand.Subscribe(x =>
+            {
+                Debug.Log(x);
+            });
+
+            // 订阅Update，执行命令
+            Observable.EveryUpdate()
+                .Subscribe(_ =>
+                {
+                    reactiveCommand.Execute();
+                });
+        }
+    }
+```
+
+ReactiveCommand 也可以被订阅（Subscribe），订阅之前，也可以使用 Where 等操作符操作。
+
+```csharp
+public class OperatorExample : MonoBehaviour
+    {
+        void Start()
+        {
+            var command = new ReactiveCommand<int>();
+
+            command.Where(x => (x % 2 == 0))
+                .Subscribe(x =>
+                {
+                    Debug.LogFormat("{0} is Even Number.", x);
+                });
+
+            command.Where(x => (x % 2 != 0))
+                .Timestamp()
+                .Subscribe(x =>
+                {
+                    Debug.LogFormat("{0} is Odd Number.{1}", x.Value, x.Timestamp);
+                });
+
+            command.Execute(2);     //输出 2 is Even Number.
+            command.Execute(3);     //输出 3 is Odd Number.03/14/2019 07:54:44 +00:00
+        }
+    }
+```
+
 
 
 
