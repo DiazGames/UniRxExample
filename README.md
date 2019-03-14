@@ -982,7 +982,62 @@ public class ThreadExample : MonoBehaviour
     }
 ```
 
+## 8. WWWObservable 优雅的网络请求
 
+UniRx 网络请求，同样支持 WhenAll 操作符。
+
+```csharp
+public class WWWExample : MonoBehaviour
+    {
+        void Start()
+        {
+            ObservableWWW.Get("http://www.baidu.com/")
+                .Subscribe(rs =>
+                {
+                    Debug.LogFormat(" baidu string {0}", rs.Substring(0, 1001));
+                });
+
+            var streamA = ObservableWWW.Get("http://sikiedu.com");
+            var streamB = ObservableWWW.Get("http://www.baidu.com/");
+
+            Observable.WhenAll(streamA, streamB)
+                .Subscribe(results =>
+                {
+                    Debug.LogFormat("1---- {0}, 2----- {1}", results[0], results[1]);
+                }).AddTo(this);
+        }
+    }
+```
+
+下载文件实现：
+
+```csharp
+public class DownLoadProgressExample : MonoBehaviour
+    {
+        void Start()
+        {
+            var progressObservable = new ScheduledNotifier<float>();
+
+            ObservableWWW
+                .GetAndGetBytes("http://po8veecle.bkt.clouddn.com/UniRx_MVP.jpg",
+                    null,
+                    progressObservable)
+                .Subscribe(bytes =>
+                {
+                    Debug.Log("文件大小为：" + (bytes.Length / 1000) + "k");
+                });
+
+            progressObservable.Subscribe(progress =>
+            {
+                Debug.LogFormat("j进度为：{0}", progress);
+            });
+        }
+    }
+```
+
+ObservableWWW 的 API 都可以穿进去一个 ScheduledNotifier<T>()，用来监听下载进度的。
+
+Subscribe 传回来的值是当前的进度。
 
 
 
