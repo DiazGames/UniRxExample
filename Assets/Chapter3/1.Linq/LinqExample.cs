@@ -21,11 +21,12 @@ namespace UniRxLession
             var firstItem = testList.First();
             Debug.Log("Use UniRx First() get first item : " + firstItem);
 
-            var newTestList = testList.Where(num => num > 1);
-            foreach (int item in newTestList)
-            {
-                Debug.Log("> 1 的item：" + item);
-            }
+            testList.Where(num => num > 1)
+                .ToList()
+                .ForEach((int obj) =>
+                {
+                    Debug.Log("> 1 的item：" + obj);
+                });
         }
 
     }

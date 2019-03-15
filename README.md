@@ -1315,11 +1315,12 @@ public class LinqExample : MonoBehaviour
             var firstItem = testList.First();
             Debug.Log("Use UniRx First() get first item : " + firstItem);
 
-            var newTestList = testList.Where(num => num > 1);
-            foreach (int item in newTestList)
-            {
-                Debug.Log("> 1 的item：" + item);
-            }
+            testList.Where(num => num > 1)
+                .ToList()
+                .ForEach((int obj) =>
+                {
+                    Debug.Log("> 1 的item：" + obj);
+                });
         }
 
     }
@@ -1342,3 +1343,67 @@ ReactiveX.io给的定义是，Rx是一个使用可观察数据流进行异步编
 ## 2.UniRx 操作符树状总结
 
 ![](http://po8veecle.bkt.clouddn.com/UniRx%E6%93%8D%E4%BD%9C%E7%AC%A6%E6%80%BB%E7%BB%93.png)
+
+## 3. Where 操作符
+
+### LINQ Where 简介：
+
+LINQ 中的 Where 操作符与 SQL 命令中的 Where 作用相似，都是起到范围限定也就是过滤作用的，而
+判断条件就是它后面所接的⼦句。
+
+查询大于20算的学生，如：
+
+```csharp
+public class LinqWhereExample : MonoBehaviour
+    {
+        class Student
+        {
+            public string Name;
+            public int Age;
+        }
+
+        private void Start()
+        {
+            var students = new List<Student>
+            {
+                new Student { Name = "Jack", Age = 20},
+                new Student { Name = "Jack", Age = 30},
+                new Student { Name = "Jack", Age = 40}
+            };
+
+            // 通过 Where 条件筛选
+            students.Where((Student arg1) => arg1.Age > 20)
+                .ToList()
+                .ForEach((Student obj) =>
+                {
+                    Debug.Log(obj.Name);
+                });
+        }
+    }
+```
+
+LINQ 查询式：
+
+```csharp
+// 使用查询句式
+(from student in students where student.Age > 20 select student)
+    .ToList()
+    .ForEach((Student obj) =>
+    {
+        Debug.Log(obj.Name);
+    });
+```
+
+UniRx 查询式：
+
+```csharp
+// UniRx 查询式示例
+(from updateEvent in Observable.EveryUpdate()
+ where Input.GetMouseButtonDown(0)
+ select updateEvent)
+.Subscribe(_ =>
+{
+    Debug.Log("Mouse Down!");
+});
+```
+
