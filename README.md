@@ -1463,17 +1463,6 @@ Observable.EveryUpdate()
             Debug.Log(students.First((Student arg1) => arg1.Age > 20).Name);
 ```
 
-### LINQ First 查询式示例
-
-```csharp
-// LINQ First 查询式示例
-            Debug.Log(
-                (from student in students select student)
-                .First((Student arg1) => arg1.Age > 20)
-                .Name
-                );
-```
-
 ### UniRx First 示例
 
 ```csharp
@@ -1482,5 +1471,96 @@ Observable.EveryUpdate()
                 .First(_ => Input.GetMouseButtonDown(0))
                 .Subscribe(_ => Debug.Log("mouse down"))
                 .AddTo(this);
+```
+
+## **6.Distinct** 操作符
+
+筛选序列中不相同的值，用于查询不重复的结果集。
+
+### LINQ Distinct 示例
+
+```csharp
+var students = new List<Student>
+            {
+                new Student { Name = "Jack", Age = 20},
+                new Student { Name = "Jack Ma", Age = 30},
+                new Student { Name = "Jack", Age = 40}
+            };
+
+// LINQ Distinct 示例
+            students.Where((Student arg1) => arg1.Age > 1)
+                .Select((Student arg1) => arg1.Name)
+                .Distinct()
+                .ToList()
+                .ForEach((string obj) => Debug.Log(obj));
+```
+
+输出值：
+
+Jack
+
+Jack Ma
+
+### **LINQ Distinct** 查询式示例(比较麻烦）
+
+```csharp
+// LINQ Distinct 查询式示例
+            (from student in students select student.Name)
+            .Distinct()
+            .ToList()
+            .ForEach((string obj) => Debug.Log(obj));
+```
+
+### **UniRx Distinct** 示例
+
+```csharp
+// UniRx Distinct 示例
+            students.ToObservable()
+                .Distinct((Student arg1) => arg1.Name)
+                .Subscribe(student =>
+                {
+                    Debug.Log(student.Name);
+                });
+```
+
+## 7. Last 操作符
+
+```csharp
+            // Linq Last
+            Debug.Log(students.Last().Name);
+
+            // UniRx Last  支持传入一个条件函数
+            students.ToObservable()
+                .Last(student => student.Age > 20)
+                .Subscribe(student => Debug.Log(student.Name));
+```
+
+## 8. SelectMany 操作符
+
+```csharp
+// SelectMany 示例
+            (students.SelectMany((Student arg1) => arg1.Name + ":" + arg1.Age))
+                .ToList()
+                .ForEach((char obj) => Debug.Log(obj));
+```
+
+```csharp
+
+```
+
+## 9. Take 操作符
+
+```csharp
+students.Take(2).ToList().ForEach((Student obj) => Debug.Log(obj.Name));
+```
+
+```csharp
+this.UpdateAsObservable()
+                .Where(_ => Input.GetMouseButtonDown(0))
+                .Take(5)
+                .Subscribe(_ =>
+                {
+                    Debug.Log("前5次点击输出");
+                });
 ```
 
