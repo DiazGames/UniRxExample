@@ -1252,5 +1252,37 @@ public class ReactiveCollectionExample : MonoBehaviour
 
 
 
+## 11.加载场景 AsyncOperation
+
+异步加载资源或异步加载场景的时候会用到 AsyncOperation
+
+UniRx 对 AsyncOperation 做了支持，使得加载操作很容易监听加载进度，如：
+
+```csharp
+public class AsyncOperationExample : MonoBehaviour
+    {
+        void Start()
+        {
+            var progressObservable = new ScheduledNotifier<float>();
+            SceneManager.LoadSceneAsync(0).AsAsyncOperationObservable(progressObservable)
+                .Subscribe(asyncOperation =>
+                {
+                    Debug.Log("Load done");
+
+                    Resources.LoadAsync<GameObject>("TestCanvas")
+                    .AsAsyncOperationObservable()
+                    .Subscribe(resourceRequest => {
+                        Instantiate(resourceRequest.asset);
+                    });
+                });
+
+            progressObservable.Subscribe(progress =>
+            {
+                Debug.LogFormat("加载了： {0}", progress);
+            });
+        }
+    }
+```
+
 
 
