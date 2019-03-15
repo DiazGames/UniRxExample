@@ -1286,3 +1286,59 @@ public class AsyncOperationExample : MonoBehaviour
 
 
 
+# UniRx 操作符大全
+
+## 1. Linq 与 UniRx 操作符
+
+UniRx 有非常多的操作符，比如(Where，First)等。
+这些操作符的意思与 LINQ 的操作符基本一致。
+
+### Linq 简介
+
+LINQ 是在 C# 3 发布的一个概念。主要是一种查询语法的实现，它可以像 SQL 语句一样查询 C# 的数据
+离列表、XML 文件 和数据库。
+
+```csharp
+public class LinqExample : MonoBehaviour
+    {
+        void Start()
+        {
+            var testList = new List<int> { 1, 2, 3 };
+
+            // ForEach 的 Linq 语法
+            testList.ForEach((int obj) =>
+            {
+                Debug.Log("item : " + obj);
+            });
+
+            // UniRx 操作符适用
+            var firstItem = testList.First();
+            Debug.Log("Use UniRx First() get first item : " + firstItem);
+
+            var newTestList = testList.Where(num => num > 1);
+            foreach (int item in newTestList)
+            {
+                Debug.Log("> 1 的item：" + item);
+            }
+        }
+
+    }
+```
+
+### ReactiveX 历史
+
+ReactiveX是Reactive Extensions的缩写，一般简写为Rx，最初是LINQ的一个扩展，由微软的架构师Erik Meijer领导的团队开发，在2012年11月开源，Rx是一个编程模型，目标是提供一致的编程接口，帮助开发者更方便的处理异步数据流，Rx库支持.NET、JavaScript和C++，Rx近几年越来越流行了，现在已经支持几乎全部的流行编程语言了，Rx的大部分语言库由ReactiveX这个组织负责维护，比较流行的有RxJava/RxJS/Rx.NET，Unity 的版本，就是UniRx 。
+
+### 什么是 ReactiveX
+
+微软给的定义是，Rx是一个函数库，让开发者可以利用可观察序列和LINQ风格查询操作符来编写异步和基于事件的程序，使用Rx，开发者可以用Observables表示异步数据流，用LINQ操作符查询异步数据流， 用Schedulers参数化异步数据流的并发处理，Rx可以这样定义：Rx = Observables + LINQ + Schedulers。
+
+ReactiveX.io给的定义是，Rx是一个使用可观察数据流进行异步编程的编程接口，ReactiveX结合了观察者模式、迭代器模式和函数式编程的精华。
+
+### ReactiveX 的应用
+
+⽐比较知名的 Microsoft、Netflix、Github、Trello、SoundCloud 都在⽤用 Rx 的各个语⾔言实现版本。
+
+## 2.UniRx 操作符树状总结
+
+![](http://po8veecle.bkt.clouddn.com/UniRx%E6%93%8D%E4%BD%9C%E7%AC%A6%E6%80%BB%E7%BB%93.png)
