@@ -1407,3 +1407,80 @@ UniRx 查询式：
 });
 ```
 
+## 4. Select 操作符
+
+### LINQ Select 示例
+
+```csharp
+// LINQ Select 示例
+(students.Where((Student arg1) => arg1.Age > 20)
+    .Select((Student arg1) => arg1.Name))
+    .ToList()
+    .ForEach((string obj) => Debug.Log(obj));
+```
+
+### LINQ Select 查询式示例
+
+```csharp
+// LINQ Select 查询式示例
+(from student in students where student.Age > 20 select student.Name)
+    .ToList()
+    .ForEach(name =>
+    {
+        Debug.Log(name);
+    });
+```
+
+### UniRx Select 示例
+
+```csharp
+// UniRx Select 示例
+Observable.EveryUpdate()
+    .Where(_ => Input.GetMouseButtonUp(0))
+    .Select(_ => "mouse up")
+    .Subscribe(Debug.Log)
+    .AddTo(this);
+```
+
+### UniRx Select 查询式示例
+
+```csharp
+// UniRx Select 查询式示例
+(from updateEvent in Observable.EveryUpdate()
+ where Input.GetMouseButtonUp(0)
+ select "mouse up")
+.Subscribe(Debug.Log)
+.AddTo(this);
+```
+
+## 5. First 操作符
+
+### LINQ First 示例
+
+```csharp
+// LINQ First 示例 两种方式
+            Debug.Log(students.Where((Student arg1) => arg1.Age > 20).First().Name);
+            Debug.Log(students.First((Student arg1) => arg1.Age > 20).Name);
+```
+
+### LINQ First 查询式示例
+
+```csharp
+// LINQ First 查询式示例
+            Debug.Log(
+                (from student in students select student)
+                .First((Student arg1) => arg1.Age > 20)
+                .Name
+                );
+```
+
+### UniRx First 示例
+
+```csharp
+// UniRx First 示例代码
+            Observable.EveryUpdate()
+                .First(_ => Input.GetMouseButtonDown(0))
+                .Subscribe(_ => Debug.Log("mouse down"))
+                .AddTo(this);
+```
+
