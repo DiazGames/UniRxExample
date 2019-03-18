@@ -1564,3 +1564,115 @@ this.UpdateAsObservable()
                 });
 ```
 
+## 10. Concat 操作符
+
+```csharp
+// concat 操作符 链接两个或多个序列
+            (students.Select(student => student.Name).Concat(students.Select(student => student.Name)))
+                .ToList()
+                .ForEach((string obj) => Debug.Log("名字：" + obj));
+```
+
+## 11. WhenAll 操作符
+
+```csharp
+Observable.WhenAll(streamA, streamB, streamC)
+      .Subscribe(_ => { Debug.Log("Completed"); });
+```
+
+## 12. OfType 操作符
+
+```csharp
+// 创建一个 Subject
+            var objects = new Subject<object>();
+
+            // 订阅Observable，进行类型过滤
+            objects.OfType<object, string>()
+                .Subscribe(Debug.Log);
+
+            // 手动发送数据
+            objects.OnNext(1);
+            objects.OnNext(2);
+            objects.OnNext("3");
+            objects.OnNext(4);
+
+            // 手动结束
+            objects.OnCompleted();
+```
+
+## 13. Cast 操作符
+
+```csharp
+// Cast 操作符 转换类型
+            var objects = new Subject<object>();
+
+            // 订阅Observable，进行类型转换
+            objects.Cast<object, int>()
+                .Subscribe(i => Debug.Log(i));
+
+            // 手动发送数据
+            objects.OnNext(1);
+            objects.OnNext(2);
+            objects.OnNext(4);
+
+            // 手动结束
+            objects.OnCompleted();
+```
+
+## 14. GroupBy 操作符
+
+对序列中的元素进行分组
+
+```csharp
+// GroupBy 操作符
+            students.GroupBy((Student arg1) => arg1.Name)
+                .ToList()
+                .ForEach((IGrouping<string, Student> obj) => Debug.Log(obj.Key));
+```
+
+## 15.Range 操作符
+
+```csharp
+// Range 操作符 生成指定范围内的整数序列
+            Observable.Range(5, 3)
+                .Select((int arg1) => arg1 * arg1)
+                .Subscribe(x => Debug.Log(x));
+```
+
+## 16. Skip 操作符
+
+```csharp
+// Range 操作符 生成指定范围内的整数序列
+            Observable.Range(5, 10)
+                .Select((int arg1) => arg1 * arg1)
+                .Skip(3)    // 跳过前三个
+                .Subscribe(x => Debug.Log(x));
+```
+
+## 17. TakeWhile 操作符
+
+```csharp
+// TakeWhile 操作符 如果指定的条件为 true，则返回序列中的元素，然后跳过剩余的元素。
+students.TakeWhile((Student arg1) => arg1.Name == "Jack")
+    .ToList()
+    .ForEach((Student obj) => Debug.Log(obj.Name + ":" + obj.Age));
+```
+
+## 18. SkipWhile 操作符
+
+```csharp
+// SkipWhile 操作符 如果指定的条件为 true，则跳过序列中的元素，然后返回剩余的元素。
+students.SkipWhile((Student arg1) => arg1.Name == "Jack")
+    .ToList()
+    .ForEach((Student obj) => Debug.Log(obj.Name + ":" + obj.Age));
+```
+
+## 19. Repeat 操作符
+
+```csharp
+// Repeat 操作 在生成序列中重复该值的次数。
+            Enumerable.Repeat("Hello world", 5)
+                .ToList()
+                .ForEach((string obj) => Debug.Log(obj));
+```
+

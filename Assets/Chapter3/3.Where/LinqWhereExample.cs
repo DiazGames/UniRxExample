@@ -126,7 +126,7 @@ namespace UniRxLession
                 .ToList()
                 .ForEach((char obj) => Debug.Log(obj));
 
-            */
+            
 
             // Take 操作符
             //students.Take(2).ToList().ForEach((Student obj) => Debug.Log(obj.Name));
@@ -138,7 +138,76 @@ namespace UniRxLession
                 {
                     Debug.Log("前5次点击输出");
                 });
+            
 
+            // concat 操作符 链接两个或多个序列
+            (students.Select(student => student.Name).Concat(students.Select(student => student.Name)))
+                .ToList()
+                .ForEach((string obj) => Debug.Log("名字：" + obj));
+            
+            
+
+            // OfType 操作符 过滤类型
+            // 创建一个 Subject
+            var objects = new Subject<object>();
+
+            // 订阅Observable，进行类型过滤
+            objects.OfType<object, string>()
+                .Subscribe(Debug.Log);
+
+            // 手动发送数据
+            objects.OnNext(1);
+            objects.OnNext(2);
+            objects.OnNext("3");
+            objects.OnNext(4);
+
+            // 手动结束
+            objects.OnCompleted();
+
+
+            // Cast 操作符 转换类型
+            var objects = new Subject<object>();
+
+            // 订阅Observable，进行类型转换
+            objects.Cast<object, int>()
+                .Subscribe(i => Debug.Log(i));
+
+            // 手动发送数据
+            objects.OnNext(1);
+            objects.OnNext(2);
+            objects.OnNext(4);
+
+            // 手动结束
+            objects.OnCompleted();
+
+            // GroupBy 操作符
+            students.GroupBy((Student arg1) => arg1.Name)
+                .ToList()
+                .ForEach((IGrouping<string, Student> obj) => Debug.Log(obj.Key));
+            
+            // Range 操作符 生成指定范围内的整数序列
+            Observable.Range(5, 10)
+                .Select((int arg1) => arg1 * arg1)
+                .Skip(3)    // 跳过前三个
+                .Subscribe(x => Debug.Log(x));
+
+            // TakeWhile 操作符 如果指定的条件为 true，则返回序列中的元素，然后跳过剩余的元素。
+            students.TakeWhile((Student arg1) => arg1.Name == "Jack")
+                .ToList()
+                .ForEach((Student obj) => Debug.Log(obj.Name + ":" + obj.Age));
+            
+            // SkipWhile 操作符 如果指定的条件为 true，则跳过序列中的元素，然后返回剩余的元素。
+            students.SkipWhile((Student arg1) => arg1.Name == "Jack")
+                .ToList()
+                .ForEach((Student obj) => Debug.Log(obj.Name + ":" + obj.Age));
+
+            */
+
+            // Repeat 操作 在生成序列中重复该值的次数。
+            Enumerable.Repeat("Hello world", 5)
+                .ToList()
+                .ForEach((string obj) => Debug.Log(obj));
+            
         }
     }
 }
