@@ -1676,3 +1676,113 @@ students.SkipWhile((Student arg1) => arg1.Name == "Jack")
                 .ForEach((string obj) => Debug.Log(obj));
 ```
 
+## 21.TakeLast 操作符
+
+```csharp
+//21.TakeLast 操作符 获取序列最后几项
+            Observable.Range(1, 10)
+                .Select((int arg1) => arg1)
+                .TakeLast(4)
+                .Subscribe(x => Debug.Log(x));
+```
+
+## 22.Single 操作符
+
+```csharp
+// 22.Single 操作符 返回序列中的单个特定元素，
+            // 与 First 非常类似，但是 Single 要确保其满足条件的元素在序列中只有一个。
+            students.ToObservable()
+                .Single((Student arg1) => arg1.Name == "Jack Ma")
+                .Subscribe(student => Debug.Log(student.Name));
+```
+
+## 23. ToArray 操作符
+
+```csharp
+// 23. ToArray 操作符 从 IEnumerable<T> 中创建数组。
+            students.Select((Student arg1) => arg1.Name)
+                .ToArray()
+                .ToObservable()
+                .Subscribe(Debug.Log);
+```
+
+## 24. ToList 操作符
+
+```csharp
+// 23. ToList 操作符 从 IEnumerable<T> 中创建List<T>。
+            students.Select((arg1) => arg1.Name)
+                .ToList()
+                .ToObservable()
+                .Subscribe(Debug.Log);
+```
+
+## 25. Aggregate 操作符
+
+```csharp
+// 24. Aggregate 操作符，对序列应用累加器函数。 
+// 将指定的种子值用作累加器的初始值，并使用指定的函数选择结果值。
+Observable.Range(1, 5)
+    .Aggregate((arg1, arg2) => arg1 * arg2)
+    .Subscribe(x => Debug.Log(" 5 的阶乘是：" + x)); //返回120，也就是1*2*3*4*5
+```
+
+
+
+# ReactiveX 独有操作符
+
+## 1. Interval (间隔) 操作符
+
+```csharp
+// 4.1 Interval （间隔）操作符
+            Observable.Interval(TimeSpan.FromSeconds(1.0f))
+                .Subscribe(x =>
+                {
+                    Debug.Log(x);
+                }).AddTo(this);
+```
+
+## 2. TakeUntil 操作符
+
+```csharp
+// 4.2 TakeUntil 操作符 当第二个 Observable 发射了一项数据或者终止时，
+// 丢弃原始Observable发射的任何数据
+// 运行之后持续输出 123，当点击⿏标左键后，停止输出 123。
+this.UpdateAsObservable()
+    .TakeUntil(Observable.EveryUpdate().Where(_ => Input.GetMouseButtonDown(0)))
+    .Subscribe(_ => Debug.Log("123"));
+```
+
+## 3. SkipUntil 操作符
+
+```csharp
+// 4.3 SkipUnitl 操作符 
+// 丢弃原始 Observable 发射的数据，直到第二个 Observable 发射了一项数据
+this.UpdateAsObservable()
+   .SkipUntil(this.UpdateAsObservable().Where(_ => Input.GetMouseButtonDown(0)))
+   .Subscribe(_ => Debug.Log("鼠标点击过了！"));
+// 输出结果为，点击⿏标左键之后就开始持续输出 “鼠标按过了”
+```
+
+## 4. Buffer (缓冲）操作符
+
+```csharp
+// 4.4 Buffer (缓冲）操作符
+            Observable.Interval(TimeSpan.FromSeconds(1.0f))
+                .Buffer(TimeSpan.FromSeconds(3.0f))
+                .Subscribe(_ =>
+                {
+                    Debug.LogFormat("CurrentTime:{0}", DateTime.Now.Second);
+                }).AddTo(this);
+```
+
+## 5. Throttle (节流阀) 操作符
+
+```csharp
+// 4.5 Throttle (节流阀）操作符
+Observable.EveryUpdate()
+    .Where(_ => Input.GetMouseButtonDown(0))
+    .Throttle(TimeSpan.FromSeconds(1.0f))
+    .Subscribe(_ => Debug.Log("点击后过了 1 秒 "));
+// 点击鼠标后 1 秒内不再点击，则输出，如果有点击，则重新计时 1 秒后输出。
+```
+
