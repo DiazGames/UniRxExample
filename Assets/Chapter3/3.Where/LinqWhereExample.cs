@@ -268,7 +268,6 @@ namespace UniRxLession
                 {
                     Debug.LogFormat("CurrentTime:{0}", DateTime.Now.Second);
                 }).AddTo(this);
-                            */
 
             // 4.5 Throttle (节流阀）操作符
             Observable.EveryUpdate()
@@ -276,6 +275,52 @@ namespace UniRxLession
                 .Throttle(TimeSpan.FromSeconds(1.0f))
                 .Subscribe(_ => Debug.Log("点击后过了 1 秒 "));
             // 点击鼠标后 1 秒内不再点击，则输出，如果有点击，则重新计时 1 秒后输出。
+
+            // 4.6 Delay （延迟）操作符
+            Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(0))
+                .Delay(TimeSpan.FromSeconds(1.0f))
+                .Subscribe(_ => Debug.Log("1 second later print "));
+            // 点击鼠标 1 秒后输出。
+
+            // 4.7 Return 操作符
+            // 就执行一次，类似 set
+            Observable.Return("hello")
+                .Subscribe(Debug.Log);
+
+            // 4.8 Timer 操作符
+            //在一个给定的延迟后发射⼀个特殊的值
+            Observable.Timer(TimeSpan.FromSeconds(5.0f))
+                .Subscribe(_ => Debug.Log("5 seconds later"));
+
+            // 4.9 Simple(ThrottleLast) 操作符
+            // 定期发射 Observable 最近发射的数据项
+            // 定时查看一个 Observable，然后发射自上次采样以来它最近发射的数据。
+            Observable.Interval(TimeSpan.FromMilliseconds(50))
+                .Sample(TimeSpan.FromSeconds(1.0f))
+                .Subscribe(_ => Debug.Log(DateTime.Now.Second))
+                .AddTo(this);
+
+
+            // 4.10 Timestamp
+            // 给 Observable 发射的数据项添加一个时间戳
+            Observable.Interval(TimeSpan.FromSeconds(1.0f))
+                .Timestamp()
+                .Subscribe(Time => Debug.Log(Time))
+                .AddTo(this);
+
+            // 4.11 ThrottleFirst
+            this.UpdateAsObservable()
+                .Where(_ => Input.GetMouseButtonDown(0))
+                .ThrottleFirst(TimeSpan.FromSeconds(5))
+                .Subscribe(x => Debug.Log("Clicked!"));
+            // 鼠标点击之后，立即输出”Clicked",输出后的5秒内点击无效
+            */
+            // 4.12 TimeInterval
+            Observable.Interval(TimeSpan.FromMilliseconds(750))
+                .TimeInterval()
+                .Subscribe(timeInterval => Debug.LogFormat("{0} : {1}", timeInterval.Value, timeInterval.Interval));
+            // 将一个发送数据的Observable 转换为发送数据并时间间隔的 Observable
         }
     }
 }
