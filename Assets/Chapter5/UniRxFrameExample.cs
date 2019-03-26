@@ -56,7 +56,7 @@ namespace UniRxLession
             Observable.Timer(TimeSpan.FromSeconds(1.0f))
                 .RepeatUntilDestroy(this)
                 .Subscribe(_ => Debug.Log("ticked"));
-                */
+                
 
             // 2 秒后在主线程输出
             Debug.Log(Time.time);
@@ -66,6 +66,57 @@ namespace UniRxLession
                 return 1;
             }).ObserveOnMainThread()
             .Subscribe(threadResult => Debug.LogFormat("{0} : {1}", threadResult, Time.time));
+            
+
+            Debug.Log(Time.time);
+            Observable.Timer(TimeSpan.FromSeconds(1.0f))
+                .DelayFrameSubscription(1)
+                .Subscribe(_ => Debug.Log(Time.time));
+                
+            // 每30帧内的第一次点击事件输出
+            Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(0))
+                .ThrottleFirstFrame(30)
+                .Subscribe(_ =>
+                {
+                    Debug.Log("Clicked!");
+                });
+                
+            // 鼠标点击后，100帧内没有点击，输出 Clicked ，否则重新计算帧数
+            Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(0))
+                .ThrottleFrame(100)
+                .Subscribe(_ =>
+                {
+                    Debug.Log("Clicked!");
+                });
+                
+            // 超过100帧不进行鼠标点击时，抛出异常
+            Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(0))
+                .TimeoutFrame(100)
+                .Subscribe(_ =>
+                {
+                    Debug.Log("Clicked!");
+                });
+                            
+            // 每次鼠标点击输出，直到GameObject销毁
+            Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(0))
+                .TakeUntilDestroy(this)
+                .Subscribe(_ => Debug.Log("Clicked"));
+                
+            // 每次鼠标点击输出，知道GameObject隐藏
+            Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(0))
+                .TakeUntilDisable(this)
+                .Subscribe(_ => Debug.Log("Clicked"));
+                */
+            // 每隔 1 秒输出，直到对象隐藏
+            Observable.Timer(TimeSpan.FromSeconds(1.0f))
+                .RepeatUntilDisable(this)
+                .Subscribe(_ => Debug.Log("Clicked"));
+
         }
     }
 }

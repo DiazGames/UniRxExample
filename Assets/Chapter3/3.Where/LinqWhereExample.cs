@@ -315,12 +315,96 @@ namespace UniRxLession
                 .ThrottleFirst(TimeSpan.FromSeconds(5))
                 .Subscribe(x => Debug.Log("Clicked!"));
             // 鼠标点击之后，立即输出”Clicked",输出后的5秒内点击无效
-            */
+            
             // 4.12 TimeInterval
             Observable.Interval(TimeSpan.FromMilliseconds(750))
                 .TimeInterval()
                 .Subscribe(timeInterval => Debug.LogFormat("{0} : {1}", timeInterval.Value, timeInterval.Interval));
             // 将一个发送数据的Observable 转换为发送数据并时间间隔的 Observable
+
+            // 4.13 直到有观察者订阅时才创建 Observable，并且为每个观察者创建⼀个新的 Observable 
+            var random = new System.Random();
+            Observable.Defer(() => Observable.Start(() => random.Next()))
+                .Delay(TimeSpan.FromMilliseconds(1000))
+                .Repeat()
+                .Subscribe(randomNumber => Debug.Log(randomNumber));
+                
+            // 连续地对数据序列的每⼀项应⽤⼀个函数，然后连续发射结果
+            Observable.Range(0, 8)
+                .Scan(0, (acc, currentValue) => acc + 5)
+                .Subscribe(xx => Debug.Log(xx));
+            
+            // 当按下⿏标时输出 “mouse button down” 抬起之后输出 “mouse button up”
+            var buttonDownStream = Observable.EveryUpdate().Where(_ => Input.GetMouseButtonDown(0));
+            var buttonUpStream = Observable.EveryUpdate().Where(_ => Input.GetMouseButtonUp(0));
+
+            buttonDownStream.Select(_ =>
+            {
+                Debug.Log("Mouse button down");
+                return buttonUpStream;
+            })
+            .Switch()
+            .Subscribe(_ => Debug.Log("Mouse button up"));
+            
+            // 输出结果：http://sikiedu.com
+            Observable.Return("sikiedu.com")
+                .StartWith("http://")
+                .Aggregate((current, next) => current + next)
+                .Subscribe(Debug.Log);
+            
+            // 当原始 Observables 的任何⼀个发射了⼀条数据时，CombineLatest 使⽤⼀个函数结合它们最近发射的数据，然后发射这个函数的返回值。
+            var a = 0;
+            var i = 0;
+            var buttonLeftStream = Observable.EveryUpdate().Where(_ => Input.GetMouseButtonDown(0)).Select(_ => (++a).ToString());
+            var buttonRightStream = Observable.EveryUpdate().Where(_ => Input.GetMouseButtonDown(1)).Select(_ => (++i).ToString());
+
+            buttonLeftStream.CombineLatest(buttonRightStream, (left, right) => left + right)
+                .Subscribe(Debug.Log);
+                
+            //注册⼀个动作作为原始 Observable ⽣命周期事件的⼀种占位符
+            Observable.ReturnUnit()
+                .Delay(TimeSpan.FromSeconds(1.0f))
+                .Do(_ => { Debug.Log("after 1 second"); })
+                .Delay(TimeSpan.FromSeconds(1.0f))
+                .Do(_ => { Debug.Log("after 2 second"); })
+                .Delay(TimeSpan.FromSeconds(1.0f))
+                .Subscribe(_ => { Debug.Log("after 3 second"); });
+                
+
+            // 点击⿏标左键则输出 “A”，点击⿏标右键则输出”B”
+            var aStream = this.UpdateAsObservable().Where(_ => Input.GetMouseButtonDown(0)).Select(_ => "A");
+            var bStream = this.UpdateAsObservable().Where(_ => Input.GetMouseButtonDown(1)).Select(_ => "B");
+
+            aStream.Merge(bStream)
+                .Subscribe(Debug.Log);
+
+            
+            // 使⽤⼀个函数从头开始创建⼀个Observable
+            Observable.Create<int>(o =>
+            {
+                o.OnNext(1);
+                o.OnNext(2);
+                o.OnCompleted();
+                return Disposable.Create(() => Debug.Log("观察者已取消订阅"));
+            }).Subscribe(xx => Debug.Log(xx));
+            */
+
+            // 当⼀秒内部做任何操作，则会报异常
+            Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(0))
+                .Take(10)
+                .Timeout(TimeSpan.FromSeconds(1.0f))
+                .Subscribe(_ =>
+                {
+                    Debug.Log("Click!");
+                });
+
+
+
+
+
+
+
         }
     }
 }
