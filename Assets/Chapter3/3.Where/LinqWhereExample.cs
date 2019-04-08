@@ -387,7 +387,7 @@ namespace UniRxLession
                 o.OnCompleted();
                 return Disposable.Create(() => Debug.Log("观察者已取消订阅"));
             }).Subscribe(xx => Debug.Log(xx));
-            */
+           
 
             // 当⼀秒内部做任何操作，则会报异常
             Observable.EveryUpdate()
@@ -398,12 +398,16 @@ namespace UniRxLession
                 {
                     Debug.Log("Click!");
                 });
-
-
-
-
-
-
+                 */
+            // 连续地对数据序列的每⼀项应⽤⼀个函数，然后连续发射结果
+            int a = 0;
+            Observable.Range(9000, 100)
+                .Scan(9000, (acc, currentValue) =>  acc + (int)(acc * 0.05))
+                .Subscribe(xx =>
+                {
+                    a++;
+                    Debug.Log("序号：" + a + " 数值：" + xx);
+                });
 
         }
     }
